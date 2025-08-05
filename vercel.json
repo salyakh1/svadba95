@@ -1,26 +1,7 @@
 {
   "version": 2,
   "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
   "env": {
     "NODE_ENV": "production"
-  },
-  "functions": {
-    "frontend/src/app/api/**/*.ts": {
-      "runtime": "nodejs18.x"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    }
-  ],
-  "build": {
-    "env": {
-      "NEXT_PUBLIC_API_URL": "@next_public_api_url",
-      "NEXT_PUBLIC_SITE_URL": "@next_public_site_url"
-    }
   }
 } 

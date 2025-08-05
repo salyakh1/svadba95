@@ -177,14 +177,14 @@ export default function InvitationPage() {
     
     try {
       // В реальном приложении здесь будет API запрос для сохранения RSVP
-      // console.log('RSVP:', {
-      //   status,
-      //   guestName,
-      //   guestEmail,
-      //   guestPhone,
-      //   plusOne,
-      //   plusOneName,
-      // })
+      console.log('RSVP:', {
+        status,
+        guestName,
+        guestEmail,
+        guestPhone,
+        plusOne,
+        plusOneName,
+      })
       
       // Показать уведомление об успехе
     } catch (error) {

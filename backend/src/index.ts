@@ -26,10 +26,15 @@ connectDatabase();
 app.use(helmet());
 
 // CORS
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? [process.env.CORS_ORIGIN || 'https://your-project.vercel.app']
+    : ['http://localhost:3000', 'http://192.168.0.100:3000'],
   credentials: true,
-}));
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -43,8 +48,10 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Статические файлы
-app.use('/uploads', express.static('uploads'));
+// Статические файлы (только для development)
+if (process.env.NODE_ENV !== 'production') {
+  app.use('/uploads', express.static('uploads'));
+}
 
 // API роуты
 app.use('/api/auth', authRoutes);

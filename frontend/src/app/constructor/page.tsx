@@ -24,6 +24,28 @@ type Block = {
   cortegeRoute?: string; // маршрут выезда за невестой
 };
 
+type InvitationData = {
+  groom: string;
+  bride: string;
+  date: string;
+  time: string;
+  place: string;
+  address: string;
+  message: string;
+  theme: string;
+  color: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    bg: string;
+    text: string;
+  };
+  font: {
+    class: string;
+    name: string;
+  };
+};
+
 const defaultData = {
   groom: 'Имя жениха',
   bride: 'Имя невесты',
@@ -120,50 +142,67 @@ const blockTypes = [
 ];
 
 export default function ConstructorPage() {
-  // Загружаем сохраненные данные из localStorage или используем дефолтные
-  const loadSavedData = () => {
-    try {
-      if (typeof window !== 'undefined') {
+  const [isClient, setIsClient] = useState(false)
+  
+  useEffect(() => {
+    setIsClient(true)
+    
+    // Загружаем данные из localStorage только на клиенте
+    if (typeof window !== 'undefined') {
+      try {
         const savedData = localStorage.getItem('weddingInvitationData');
         const savedBlocks = localStorage.getItem('weddingInvitationBlocks');
         const savedColor = localStorage.getItem('weddingInvitationColor');
         const savedFont = localStorage.getItem('weddingInvitationFont');
         const savedBg = localStorage.getItem('weddingInvitationBg');
         
-        return {
-          data: savedData ? JSON.parse(savedData) : defaultData,
-          blocks: savedBlocks ? JSON.parse(savedBlocks) : defaultBlocks,
-          color: savedColor ? JSON.parse(savedColor) : colorSchemes[0],
-          font: savedFont ? JSON.parse(savedFont) : fonts[0],
-          bg: savedBg || null
-        };
+        if (savedData) {
+          setData(JSON.parse(savedData));
+        }
+        if (savedBlocks) {
+          setBlocks(JSON.parse(savedBlocks));
+        }
+        if (savedColor) {
+          setColor(JSON.parse(savedColor));
+        }
+        if (savedFont) {
+          setFont(JSON.parse(savedFont));
+        }
+        if (savedBg) {
+          setBg(savedBg);
+        }
+      } catch (error) {
+        console.error('Ошибка загрузки данных из localStorage:', error);
       }
-      return {
-        data: defaultData,
-        blocks: defaultBlocks,
-        color: colorSchemes[0],
-        font: fonts[0],
-        bg: null
-      };
-    } catch (error) {
-      console.error('Ошибка загрузки данных из localStorage:', error);
-      return {
-        data: defaultData,
-        blocks: defaultBlocks,
-        color: colorSchemes[0],
-        font: fonts[0],
-        bg: null
-      };
     }
-  };
+  }, [])
 
-  const savedData = loadSavedData();
-  
-  const [data, setData] = useState(savedData.data);
-  const [blocks, setBlocks] = useState<Block[]>(savedData.blocks);
-  const [bg, setBg] = useState<string | null>(savedData.bg);
-  const [color, setColor] = useState(savedData.color);
-  const [font, setFont] = useState(savedData.font);
+
+  const [data, setData] = useState<InvitationData>({
+    groom: '',
+    bride: '',
+    date: new Date().toISOString().split('T')[0],
+    time: '18:00',
+    place: 'Ресторан',
+    address: 'Адрес проведения',
+    message: 'Приглашаем вас на нашу свадьбу!',
+    theme: 'classic',
+    color: {
+      primary: '#3b82f6',
+      secondary: '#8b5cf6',
+      accent: '#f59e0b',
+      bg: 'bg-gradient-to-br from-blue-50 to-purple-50',
+      text: 'text-gray-900'
+    },
+    font: {
+      class: 'font-serif',
+      name: 'Playfair Display'
+    }
+  });
+  const [blocks, setBlocks] = useState<Block[]>([]);
+  const [bg, setBg] = useState<string | null>(null);
+  const [color, setColor] = useState(colorSchemes[0]);
+  const [font, setFont] = useState(fonts[0]);
   const fileInput = useRef<HTMLInputElement>(null);
   const [countdown, setCountdown] = useState({
     weeks: '00',
@@ -335,7 +374,7 @@ export default function ConstructorPage() {
       };
 
       // В реальном приложении здесь будет API запрос
-      // console.log('Сохранение приглашения:', invitationData);
+      console.log('Сохранение приглашения:', invitationData);
       
       if (!invitationId) {
         setInvitationId(invitationData.id);
@@ -488,7 +527,7 @@ export default function ConstructorPage() {
             <div className="w-[370px] h-[740px] rounded-[2.5rem] bg-neutral-900 border-8 border-neutral-800 shadow-2xl flex flex-col items-center overflow-hidden relative">
               {/* Фон */}
               <div className="absolute inset-0 w-full h-full z-0">
-                {bg ? (
+                {bg && isClient ? (
                   <img src={bg} alt="Фон" className="w-full h-full object-cover" style={{ opacity: 0.3 }} onError={e => (e.currentTarget.style.display = 'none')} />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-900 opacity-60" />
@@ -650,7 +689,9 @@ export default function ConstructorPage() {
                     if (b.type === 'photo' && b.image) {
                       return (
                         <div key={b.id} className="flex flex-col items-center my-4">
-                          <img src={b.image} alt="Фото" className="w-32 h-32 object-cover rounded-full border-4 border-white/30 shadow-lg" />
+                          {isClient && (
+                            <img src={b.image} alt="Фото" className="w-32 h-32 object-cover rounded-full border-4 border-white/30 shadow-lg" />
+                          )}
                         </div>
                       );
                     }
@@ -667,11 +708,13 @@ export default function ConstructorPage() {
                           title="Открыть карту в новой вкладке"
                         >
                           {b.label && <div className={`font-semibold mb-1 ${getAccentColor('headings')} drop-shadow-sm text-lg`}>{b.label}</div>}
-                          <img
-                            src={`https://static-maps.yandex.ru/1.x/?lang=ru_RU&ll=&size=350,200&z=15&l=map&pt=&pl=&text=${encodeURIComponent(b.value)}`}
-                            alt="Карта"
-                            className="w-full h-48 object-cover rounded-xl border border-white/10 shadow-lg group-hover:brightness-90 group-hover:scale-[1.02] transition"
-                          />
+                          {isClient && (
+                            <img
+                              src={`https://static-maps.yandex.ru/1.x/?lang=ru_RU&ll=&size=350,200&z=15&l=map&pt=&pl=&text=${encodeURIComponent(b.value)}`}
+                              alt="Карта"
+                              className="w-full h-48 object-cover rounded-xl border border-white/10 shadow-lg group-hover:brightness-90 group-hover:scale-[1.02] transition"
+                            />
+                          )}
                           <div className={`text-xs ${getTextColor('main')} opacity-70 mt-1 underline group-hover:${getAccentColor('accent')} transition`}>{b.value} <span className="ml-1">↗</span></div>
                         </div>
                       );
@@ -1074,7 +1117,7 @@ export default function ConstructorPage() {
                 ) : b.type === 'photo' ? (
                   <>
                     <input type="file" accept="image/*" onChange={e => updateBlockImage(b.id, e.target.files?.[0] || null)} />
-                    {b.image && <img src={b.image} alt="Фото" className="w-24 h-24 object-cover rounded-full mx-auto mt-2" />}
+                    {b.image && isClient && <img src={b.image} alt="Фото" className="w-24 h-24 object-cover rounded-full mx-auto mt-2" />}
                   </>
                 ) : b.type === 'map' ? (
                   <input type="text" className="border border-neutral-700 bg-neutral-900 text-white rounded px-2 py-1" placeholder="Адрес или координаты" value={b.value} onChange={e => updateBlock(b.id, { value: e.target.value })} />

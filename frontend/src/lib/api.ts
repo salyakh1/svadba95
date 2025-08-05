@@ -4,9 +4,13 @@ import { ApiResponse } from '@/types';
 // Создание экземпляра axios
 const api: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || '/api',
-  timeout: 10000,
+  timeout: 15000, // Увеличиваем timeout для production
   headers: {
     'Content-Type': 'application/json',
+  },
+  // Добавляем retry логику для production
+  validateStatus: (status) => {
+    return status >= 200 && status < 500; // Принимаем все статусы кроме 5xx
   },
 });
 

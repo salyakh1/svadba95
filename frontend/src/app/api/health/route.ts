@@ -5,5 +5,6 @@ export async function GET() {
     success: true,
     message: 'Frontend API is running',
     timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
   })
 } 

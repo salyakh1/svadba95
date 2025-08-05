@@ -11,7 +11,7 @@ export async function geocodeAddress(address: string): Promise<GeocodingResult |
   try {
     // Здесь будет реальный API вызов
     // Пока возвращаем заглушку для демонстрации
-    // console.log('Геокодинг адреса:', address)
+    console.log('Геокодинг адреса:', address)
     
     // Пример координат для Москвы
     return {
