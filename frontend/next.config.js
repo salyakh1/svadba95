@@ -10,8 +10,7 @@ const nextConfig = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
   },
-  // Для Vercel деплоя
-  output: 'standalone',
+  // Настройки для исправления ошибки constructor.rsc
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client'],
   },
@@ -23,6 +22,18 @@ const nextConfig = {
         destination: '/api/:path*',
       },
     ]
+  },
+  // Настройки для Vercel
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
+  // Добавляем настройки для лучшей совместимости
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
   },
 }
 

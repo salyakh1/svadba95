@@ -4,9 +4,6 @@ import Link from 'next/link';
 import { FaPalette, FaGlobe, FaUserFriends, FaEnvelopeOpenText, FaGlassCheers, FaSave, FaShare, FaQrcode } from 'react-icons/fa';
 import QRCode from 'qrcode.react';
 
-// Динамический рендеринг для избежания проблем с SSR
-export const dynamic = 'force-dynamic';
-
 type Block = {
   id: string;
   type: 'text' | 'photo' | 'date' | 'signature' | 'menu' | 'wishes' | 'note' | 'map' | 'video' | 'names' | 'message' | 'datetime' | 'venue' | 'address' | 'wishes-slider' | 'countdown' | 'cortege';
