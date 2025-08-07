@@ -10,7 +10,6 @@ const nextConfig = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
   },
-  // Настройки для исправления ошибки constructor.rsc
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client'],
   },
