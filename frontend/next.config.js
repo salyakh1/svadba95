@@ -35,6 +35,9 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  // Добавляем настройки для устранения проблем с RSC
+  output: 'standalone',
+  poweredByHeader: false,
 }
 
 module.exports = nextConfig 
