@@ -1,8 +1,9 @@
 ﻿"use client";
-import { useState, useRef, useEffect } from 'react';
 
 // Явно указываем, что это динамический компонент
 export const dynamic = 'force-dynamic';
+
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { FaPalette, FaGlobe, FaUserFriends, FaEnvelopeOpenText, FaGlassCheers, FaSave, FaShare, FaQrcode } from 'react-icons/fa';
 import QRCode from 'qrcode.react';
