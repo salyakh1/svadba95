@@ -9,4 +9,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .DS_Store
-*.tsbuildinfo 
+*.tsbuildinfo
+# Исключаем .rsc файлы которые вызывают ошибку
+*.rsc
+*.rsc.tsx
+*.rsc.js
+*.rsc.jsx 
